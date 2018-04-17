@@ -86,7 +86,7 @@ public class Paddle : PhysicsObject
     {
         get
         {
-            return CurrentRetractCurve.Evaluate(currentRetractPercentage);
+            return 1f - CurrentRetractCurve.Evaluate(1f - currentRetractPercentage);
         }
     }
     #endregion

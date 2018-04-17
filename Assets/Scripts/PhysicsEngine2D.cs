@@ -178,6 +178,7 @@ public class PhysicsEngine2D : MonoBehaviour
             _paddle.StartRetracting(true);
         }
 
-        //Time.timeScale = 0;
+		//Time.timeScale = 0;
+		UnityEditor.EditorApplication.isPaused = true;
     }
 }

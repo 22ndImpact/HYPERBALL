@@ -36,7 +36,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1961793009871082}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.7, z: 0}
+  m_LocalPosition: {x: 0, y: 3.75, z: 0}
   m_LocalScale: {x: 6, y: 2.4, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -83,7 +83,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0}
   paddleState: 0
   StartingPosition: {x: 0, y: 0}
-  fireKey: 260
+  fireKey: 263
   timeToCharge: 0.2
   currentChargeTime: 0
   chargeDistance: 1
@@ -92,15 +92,21 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 2
       time: 0
-      value: 0
-      inSlope: 1
-      outSlope: 1
+      value: -0.0024414062
+      inSlope: 1.207733
+      outSlope: 1.207733
       tangentMode: 0
     - serializedVersion: 2
-      time: 1
-      value: 1
-      inSlope: 1
-      outSlope: 1
+      time: 0.48331332
+      value: 0.5897472
+      inSlope: 1.1564482
+      outSlope: 1.1564482
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.99902344
+      value: 0.9975586
+      inSlope: -1.7282083
+      outSlope: -1.7282083
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -108,7 +114,7 @@ MonoBehaviour:
   chargedPercent: 0
   chargedPosition: {x: 0, y: 0, z: 0}
   reachTime: 0.1
-  maxReachDistance: 4
+  maxReachDistance: 4.75
   goalReachDistance: 0
   currentReachPercentage: 0
   EmptyRetractCurve:
@@ -117,14 +123,38 @@ MonoBehaviour:
     - serializedVersion: 2
       time: 0
       value: 0
-      inSlope: 1
-      outSlope: 1
+      inSlope: -0.03689898
+      outSlope: -0.03689898
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.045168966
+      value: 0.018797642
+      inSlope: 0.08563047
+      outSlope: 0.08563047
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.11840423
+      value: -0.028573299
+      inSlope: -0.06570837
+      outSlope: -0.06570837
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.23834851
+      value: 0.11818352
+      inSlope: 0.27321446
+      outSlope: 0.27321446
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.42470965
+      value: -0.14602046
+      inSlope: 0.18455869
+      outSlope: 0.18455869
       tangentMode: 0
     - serializedVersion: 2
       time: 1
       value: 1
-      inSlope: 1
-      outSlope: 1
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -135,22 +165,46 @@ MonoBehaviour:
     - serializedVersion: 2
       time: 0
       value: 0
-      inSlope: 1
-      outSlope: 1
+      inSlope: -0.03689898
+      outSlope: -0.03689898
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.045168966
+      value: 0.018797642
+      inSlope: 0.08563047
+      outSlope: 0.08563047
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.11840423
+      value: -0.028573299
+      inSlope: -0.06570837
+      outSlope: -0.06570837
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.3228517
+      value: 0.041950613
+      inSlope: 0.27321446
+      outSlope: 0.27321446
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.6193508
+      value: -0.037530467
+      inSlope: 0.038392443
+      outSlope: 0.038392443
       tangentMode: 0
     - serializedVersion: 2
       time: 1
       value: 1
-      inSlope: 1
-      outSlope: 1
+      inSlope: 5.2214727
+      outSlope: 5.2214727
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
   reachedPosition: {x: 0, y: 0, z: 0}
   retractTime: 0
-  hitRetractTime: 0.2
-  emptyRetractTime: 0.2
+  hitRetractTime: 0.25
+  emptyRetractTime: 0.4
   currentRetractPercentage: 0
 --- !u!212 &212097967323862478
 SpriteRenderer:
