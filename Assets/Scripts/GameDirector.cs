@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameDirector : MonoBehaviour
 {
+    public int ScoreToWin;
     public int Player1Score;
     public int Player2Score;
     public float BallSpinSpeed;
@@ -17,19 +18,27 @@ public class GameDirector : MonoBehaviour
         PreGame,
         GameStarting,
         InGame,
+        RoundOver,
         GameOver
     }
     public GameState gameState;
     bool playersReadyToStart;
-    float SleepTimer;
-    public float SpinnerSleepTime;
+    float SpinSleepTimer;
     public float FieldExtents;
-    public float EndGameSleep;
-    float EndGameTimer;
+
+    float SleepTimer;
+    public bool GameSleeping;
+    public float SleepDisplayGameReady;
+    public float SleepBeforeBallShoots;
+    public float SleepDisplayScores;
+    public float SleepDisplayVictory;
 
     public Ball ball;
     public GameObject Spinner;
     public Player[] Players;
+    public Announcer announcer;
+
+    bool PlayersHaveCharged = false;
 
     private void Awake()
     {
@@ -42,8 +51,8 @@ public class GameDirector : MonoBehaviour
         //Set initial game state
         gameState = GameState.PreGame;
 
-        #region Find Paddles
-        #endregion
+        //Runs the reset game function to "start a new game"
+        ResetGame();
     }
 
     void Update()
@@ -62,6 +71,9 @@ public class GameDirector : MonoBehaviour
                 break;
             case GameState.InGame:
                 UpdateInGame();
+                break;
+            case GameState.RoundOver:
+                UpdateRoundOver();
                 break;
             case GameState.GameOver:
                 UpdateGameOver();
@@ -91,7 +103,7 @@ public class GameDirector : MonoBehaviour
                         {
                             //Set players to ready and exit loop
                             playersReadyToStart = true;
-                            Debug.Log("Players Ready");
+                            //Debug.Log("Players Ready");
                             break;
                         }
                     }
@@ -105,6 +117,13 @@ public class GameDirector : MonoBehaviour
         //Only check when players are ready
         if (playersReadyToStart == true)
         {
+            //If this is the first frame they have been charged, play the announcer clip
+            if(PlayersHaveCharged == false)
+            {
+                PlayersHaveCharged = true;
+                announcer.StartGameReady();
+            }
+
             //Create a variable to track any inputs
             bool Player1Input = false;
             bool Player2Input = false;
@@ -163,7 +182,7 @@ public class GameDirector : MonoBehaviour
 
     IEnumerator SpinBall(float SpinTime)
     {
-        Debug.Log("Start Spin");
+        //Debug.Log("Start Spin");
 
         //Make The spinner visible
         Spinner.GetComponent<SpriteRenderer>().enabled = true;
@@ -191,17 +210,17 @@ public class GameDirector : MonoBehaviour
                         (CurrentRotation > 240 - PossibleLaunchAngle && CurrentRotation < 240 + PossibleLaunchAngle) ||
                         (CurrentRotation > 300 - PossibleLaunchAngle && CurrentRotation < 300 + PossibleLaunchAngle))
             {
-                Debug.Log("Stop the spinning");
+                //Debug.Log("Stop the spinning");
                 Spinning = false;
             }
             yield return null;
         }
 
         //Pause for effect
-        SleepTimer = SpinnerSleepTime;
-        while (SleepTimer > 0)
+        SpinSleepTimer = SleepBeforeBallShoots;
+        while (SpinSleepTimer > 0)
         {
-            SleepTimer -= Time.deltaTime;
+            SpinSleepTimer -= Time.deltaTime;
             yield return null;
         }
 
@@ -214,7 +233,7 @@ public class GameDirector : MonoBehaviour
 
     void LaunchBall()
     {
-        Debug.Log("LaunchBall");
+        //Debug.Log("LaunchBall");
 
         Spinner.GetComponent<SpriteRenderer>().enabled = false;
 
@@ -230,57 +249,134 @@ public class GameDirector : MonoBehaviour
         #region Checking if the ball is still within bounds
         if (ball.transform.position.x < -FieldExtents)
         {
-            EndGame(1);
+            EndRound(2);
         }
         else if (ball.transform.position.x > FieldExtents)
         {
-            EndGame(2);
+            EndRound(1);
         }
         #endregion
     }
 
-    void UpdateGameOver()
-    {
-        EndGameTimer -= Time.deltaTime;
-
-        //Reset the game if the timer has reached 0
-        if (EndGameTimer <= 0)
-        {
-            ResetGame();
-        }
-    }
-
-    void EndGame(int playerPoint)
+    void EndRound(int playerPoint)
     {
         //Set the game state
-        gameState = GameState.GameOver;
+        gameState = GameState.RoundOver;
 
         //Check to see what player won
         if (playerPoint == 1)
         {
             Player1Score += 1;
             Debug.Log("player 1 wins");
+            //Run the announcer text
+            announcer.StartPlayerOneScore();
         }
-        else
+        else if(playerPoint == 2)
         {
             Player2Score += 1;
             Debug.Log("player 2 wins");
+            //Run the announcer text
+            announcer.StartPlayerTwoScore();
         }
 
         //Start the game over timer
-        EndGameTimer = EndGameSleep;
+        SleepTimer = SleepDisplayScores;
 
         //Stop the ball moving
         ball.ChangeVelocity(Vector3.zero, Ball.BallSpeeds.InitialSpeed);
+
+        //Change to ball to red to display out of bounds
+        ball.GetComponent<SpriteRenderer>().color = Color.red;
+
+        //Turns the ball off
+        ball.gameObject.SetActive(false);
+    }
+
+    void UpdateRoundOver()
+    {
+        SleepTimer -= Time.deltaTime;
+
+        //Reset the game if the timer has reached 0
+        if (SleepTimer <= 0)
+        {
+            //If the required score has been met
+            if(Player1Score >= ScoreToWin || Player2Score >= ScoreToWin)
+            {
+                GameOver();
+            }
+            else
+            {
+                NewRound();
+            }
+        }
+    }
+
+    void NewRound()
+    {
+        //Turns the ball on
+        ball.gameObject.SetActive(true);
+
+        //Reset the ball, duh
+        ball.Reset();
+
+        //Start a new game
+        StartGame();
+    }
+
+    void GameOver()
+    {
+        Debug.Log("Game Over");
+        //Reset the ball, duh
+        //ball.Reset();
+
+        //Start the announcer text
+        if (Player1Score > Player2Score)
+        {
+            Debug.Log("Player 1 Wins");
+            announcer.StartPlayerOneWins();
+        }
+        else
+        {
+            Debug.Log("Player 2 Wins");
+            announcer.StartPlayerTwoWins();
+        }
+
+        //Set the new timer
+        SleepTimer = SleepDisplayVictory;
+
+        //Set to game over
+        gameState = GameState.GameOver;
+    }
+
+    void UpdateGameOver()
+    {
+        Debug.Log("updating game over screen: " + SleepTimer);
+        SleepTimer -= Time.deltaTime;
+
+        //Display the text and pause for end game
+        if (SleepTimer <= 0)
+        {
+            ResetGame();
+        }
     }
 
     void ResetGame()
     {
+        //Reset the fact that players have charged their paddles for game start
+        PlayersHaveCharged = false;
+
         //Reset the ball, duh
         ball.Reset();
 
         //Changes the game state
         gameState = GameState.PreGame;
+
+        //Starts the attract mode annoucner loop
+        announcer.StartAttractMode();
+
+        //Resets the scores
+        Player1Score = 0;
+        Player2Score = 0;
     }
 
     private void OnDrawGizmos()
@@ -289,4 +385,6 @@ public class GameDirector : MonoBehaviour
 
         Gizmos.DrawLine(new Vector3(FieldExtents, -10, 0), new Vector3(FieldExtents, 10, 0));
     }
+
+
 }

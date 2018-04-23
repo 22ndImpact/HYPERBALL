@@ -141,9 +141,26 @@ public class Paddle : PhysicsObject
         //If you are static and you have hit the fire key this frame, set to charging
         if(paddleState == PaddleState.Static)
         {
-            if(Input.GetKeyDown(fireKey))
+            if(Input.GetKey(fireKey))
             {
-                StartCharging();
+                //Grab the paddles player
+                Player player = transform.parent.gameObject.GetComponent<Player>();
+                //Create and set the charging flag to false
+                bool Charging = false;
+                //Check is any of the plaerys paddles are charging
+                foreach(Paddle _paddle in player.Paddles)
+                {
+                    if(_paddle.paddleState == PaddleState.Charging)
+                    {
+                        Charging = true;
+                    }
+                }
+                //If none of them are then charge yourself
+                if(Charging == false)
+                {
+                    StartCharging();
+                }
+                
             }
         }
 
