@@ -82,6 +82,9 @@ MonoBehaviour:
   previousPosition: {x: 0, y: 0}
   velocity: {x: 0, y: 0}
   paddleState: 0
+  chargeSound: {fileID: 8300000, guid: 3d274048046d6014b88173f23a87d778, type: 3}
+  launchSound: {fileID: 8300000, guid: 4635d7fd80109c549bc9799e8500c00e, type: 3}
+  retractSound: {fileID: 8300000, guid: 52807a6ee63a2754bb73b55a9535ced3, type: 3}
   StartingPosition: {x: 0, y: 0}
   fireKey: 263
   timeToCharge: 0.2

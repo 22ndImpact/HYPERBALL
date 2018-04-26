@@ -39,7 +39,8 @@ public class GameDirector : MonoBehaviour
     public Player[] Players;
     public Announcer announcer;
 
-    
+	public AudioClip ballLaunchClip;
+	public AudioClip ballScoreClip;
 
     bool PlayersHaveCharged = false;
 
@@ -237,6 +238,7 @@ public class GameDirector : MonoBehaviour
 
         //Shoot the ball
         LaunchBall();
+		SoundController.PlayOneShot (ballLaunchClip);
     }
 
     void LaunchBall()
@@ -270,6 +272,8 @@ public class GameDirector : MonoBehaviour
     {
 		//Shake the screen -- ZAC
 		CameraShake.Shake (1f);
+		DistortionWave.Play (ball.transform.position);
+		SoundController.PlayOneShot (ballScoreClip);
 
 		//Set the game state
 		gameState = GameState.RoundOver;

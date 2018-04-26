@@ -15,8 +15,12 @@ public class Paddle : PhysicsObject
     }
     public PaddleState paddleState;
 
-    #region Transform Variables
-    public Vector2 StartingPosition;
+	public AudioClip chargeSound;
+	public AudioClip launchSound;
+	public AudioClip retractSound;
+
+	#region Transform Variables
+	public Vector2 StartingPosition;
     #endregion
 
     #region Input Variables
@@ -182,6 +186,7 @@ public class Paddle : PhysicsObject
     public void StartCharging()
     {
         paddleState = PaddleState.Charging;
+		SoundController.PlayOneShot (chargeSound);
     }
     public void StartReaching()
     {
@@ -195,7 +200,8 @@ public class Paddle : PhysicsObject
         goalReachDistance = maxReachDistance * chargedPercent;
         //Set the chargedPosition to your current position
         chargedPosition = transform.position;
-    }
+		SoundController.PlayOneShot (launchSound, chargedPercent);
+	}
     public void StartRetracting(bool _BallCollision)
     {
         //Set the paddle state
@@ -217,7 +223,8 @@ public class Paddle : PhysicsObject
         currentReachPercentage = 0;
         //Set the currently reached position
         reachedPosition = transform.position;
-    }
+		SoundController.PlayOneShot (retractSound);
+	}
     #endregion
     #region State "Update" Functions
     public void UpdateStatic()

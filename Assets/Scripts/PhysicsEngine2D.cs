@@ -18,6 +18,9 @@ public class PhysicsEngine2D : MonoBehaviour
 
     public float EdgeBounceMultiplier;
 
+	public AudioClip paddleHitSound;
+	public AudioClip wallHitSound;
+
     private void Awake()
     {
         //Initializing the global singlton
@@ -261,6 +264,7 @@ public class PhysicsEngine2D : MonoBehaviour
 			//Distortion effect -- ZAC
 			DistortionWave.Play (_ball.transform.position);
 			CameraShake.Shake (0.5f);
+			SoundController.PlayOneShot (paddleHitSound);
 		}
         //Just bounce off
         else
