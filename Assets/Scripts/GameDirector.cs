@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameDirector : MonoBehaviour
 {
@@ -38,6 +39,8 @@ public class GameDirector : MonoBehaviour
     public Player[] Players;
     public Announcer announcer;
 
+    
+
     bool PlayersHaveCharged = false;
 
     private void Awake()
@@ -58,6 +61,11 @@ public class GameDirector : MonoBehaviour
     void Update()
     {
         UpdateStates();
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 
     void UpdateStates()
@@ -267,14 +275,14 @@ public class GameDirector : MonoBehaviour
         if (playerPoint == 1)
         {
             Player1Score += 1;
-            Debug.Log("player 1 wins");
+            //Debug.Log("player 1 wins");
             //Run the announcer text
             announcer.StartPlayerOneScore();
         }
         else if(playerPoint == 2)
         {
             Player2Score += 1;
-            Debug.Log("player 2 wins");
+            //Debug.Log("player 2 wins");
             //Run the announcer text
             announcer.StartPlayerTwoScore();
         }
@@ -303,19 +311,21 @@ public class GameDirector : MonoBehaviour
             if(Player1Score >= ScoreToWin || Player2Score >= ScoreToWin)
             {
                 GameOver();
+                
             }
             else
             {
                 NewRound();
+                
             }
         }
     }
 
     void NewRound()
     {
+        Debug.Log("New Round");
         //Turns the ball on
         ball.gameObject.SetActive(true);
-
         //Reset the ball, duh
         ball.Reset();
 
@@ -325,19 +335,17 @@ public class GameDirector : MonoBehaviour
 
     void GameOver()
     {
-        Debug.Log("Game Over");
-        //Reset the ball, duh
-        //ball.Reset();
+        //Debug.Log("Game Over");
 
         //Start the announcer text
         if (Player1Score > Player2Score)
         {
-            Debug.Log("Player 1 Wins");
+            //Debug.Log("Player 1 Wins");
             announcer.StartPlayerOneWins();
         }
         else
         {
-            Debug.Log("Player 2 Wins");
+            //Debug.Log("Player 2 Wins");
             announcer.StartPlayerTwoWins();
         }
 
@@ -350,7 +358,7 @@ public class GameDirector : MonoBehaviour
 
     void UpdateGameOver()
     {
-        Debug.Log("updating game over screen: " + SleepTimer);
+        //Debug.Log("updating game over screen: " + SleepTimer);
         SleepTimer -= Time.deltaTime;
 
         //Display the text and pause for end game
@@ -365,6 +373,9 @@ public class GameDirector : MonoBehaviour
         //Reset the fact that players have charged their paddles for game start
         PlayersHaveCharged = false;
 
+        Debug.Log("New Game");
+        //Turns the ball on
+        ball.gameObject.SetActive(true);
         //Reset the ball, duh
         ball.Reset();
 

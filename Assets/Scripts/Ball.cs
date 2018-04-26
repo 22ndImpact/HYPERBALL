@@ -91,7 +91,7 @@ public class Ball : PhysicsObject
         ChangeVelocity(Vector3.zero, Ball.BallSpeeds.InitialSpeed);
 
         //Reset the ball visual
-        Debug.Log("Starting Scale: " + StartingLocalScale);
+        //Debug.Log("Starting Scale: " + StartingLocalScale);
         ballVisual.localScale = StartingLocalScale;
         TargetLocalScale = StartingLocalScale;
         ballVisual.localPosition = Vector3.zero;

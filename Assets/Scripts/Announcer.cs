@@ -46,10 +46,10 @@ public class Announcer : MonoBehaviour
     private void Awake()
     {
         //Remembers where the player announcers started
-        Debug.Log("Player 1 announcer position: " + playerOne.transform.position);
+        //Debug.Log("Player 1 announcer position: " + playerOne.transform.position);
         PlayerOneStartingPosition = playerOne.transform.position;
 
-        Debug.Log("Player 2 announcer position: " + playerTwo.transform.position);
+        //Debug.Log("Player 2 announcer position: " + playerTwo.transform.position);
         PlayerTwoStartingPosition = playerTwo.transform.position;
 
 
@@ -247,7 +247,7 @@ public class Announcer : MonoBehaviour
 
     IEnumerator DisplayText(float _duration, string _P1T, string _P1B, string _P2T, string _P2B)
     {
-        Debug.Log("Turning on Text");
+        //Debug.Log("Turning on Text");
 
         //Turns the text on
         TurnOn();

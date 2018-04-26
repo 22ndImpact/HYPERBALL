@@ -163,7 +163,7 @@ public class PhysicsEngine2D : MonoBehaviour
         //Right Side
         if(_ball.transform.position.x > (_paddle.transform.position.x + _paddle.col2D.bounds.extents.x))
         {
-            Debug.Log("Hit the right side");
+            //Debug.Log("Hit the right side");
             //Makes the current X direction positive
             newDirection.x = 1;
 
@@ -187,12 +187,12 @@ public class PhysicsEngine2D : MonoBehaviour
                 newSpeed = Ball.BallSpeeds.WallSpeed;
             }
             collisionType = "right";
-            Debug.Log("Verticle Offset: " + VerticleOffset);
+            //Debug.Log("Verticle Offset: " + VerticleOffset);
         }
         //Left Side
         else if(_ball.transform.position.x < (_paddle.transform.position.x - _paddle.col2D.bounds.extents.x))
         {
-            Debug.Log("Hit the left side");
+            //Debug.Log("Hit the left side");
             //Makes the current X direction negative
             newDirection.x = -1;
 
@@ -219,12 +219,12 @@ public class PhysicsEngine2D : MonoBehaviour
             collisionType = "left";
 
 
-            Debug.Log("Verticle Offset: " + VerticleOffset);
+            //Debug.Log("Verticle Offset: " + VerticleOffset);
         }
         //Top Side
         else if (_ball.transform.position.y > (_paddle.transform.position.y + _paddle.col2D.bounds.extents.y))
         {
-            Debug.Log("Hit the top side");
+            //Debug.Log("Hit the top side");
             //Makes the current Y direction positive
             newDirection.y = (Mathf.Abs(newDirection.y));
             //Change the velocity and set the right speed
@@ -235,7 +235,7 @@ public class PhysicsEngine2D : MonoBehaviour
         //Bottom Side
         else if (_ball.transform.position.y < (_paddle.transform.position.y - _paddle.col2D.bounds.extents.y))
         {
-            Debug.Log("Hit the bottom side");
+            //Debug.Log("Hit the bottom side");
             //Makes the current Y direction negative
             newDirection.y = (Mathf.Abs(newDirection.y) * -1);
             //Change the velocity and set the right speed
@@ -245,7 +245,7 @@ public class PhysicsEngine2D : MonoBehaviour
         }
         else
         {
-            Debug.Log("WTF happened?");
+            //Debug.Log("WTF happened?");
         }
 
         //If the paddle hit the ball while reaching out
