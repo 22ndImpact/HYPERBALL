@@ -268,8 +268,11 @@ public class GameDirector : MonoBehaviour
 
     void EndRound(int playerPoint)
     {
-        //Set the game state
-        gameState = GameState.RoundOver;
+		//Shake the screen -- ZAC
+		CameraShake.Shake (1f);
+
+		//Set the game state
+		gameState = GameState.RoundOver;
 
         //Check to see what player won
         if (playerPoint == 1)

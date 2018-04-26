@@ -231,7 +231,8 @@ public class PhysicsEngine2D : MonoBehaviour
             //_ball.ChangeVelocity(newDirection, Ball.BallSpeeds.WallSpeed);
             newSpeed = Ball.BallSpeeds.WallSpeed;
             collisionType = "top";
-        }
+			CameraShake.Shake (0.8f);
+		}
         //Bottom Side
         else if (_ball.transform.position.y < (_paddle.transform.position.y - _paddle.col2D.bounds.extents.y))
         {
@@ -242,7 +243,8 @@ public class PhysicsEngine2D : MonoBehaviour
             //_ball.ChangeVelocity(newDirection, Ball.BallSpeeds.WallSpeed);
             newSpeed = Ball.BallSpeeds.WallSpeed;
             collisionType = "bottom";
-        }
+			CameraShake.Shake (0.8f);
+		}
         else
         {
             //Debug.Log("WTF happened?");
@@ -255,7 +257,11 @@ public class PhysicsEngine2D : MonoBehaviour
             _paddle.StartRetracting(true);
             //Slow time
             StartCoroutine(slowTime(hitTimeSlowScale, paddleHitTimeSlowDuration, newDirection, newSpeed, collisionType));
-        }
+
+			//Distortion effect -- ZAC
+			DistortionWave.Play (_ball.transform.position);
+			CameraShake.Shake (0.5f);
+		}
         //Just bounce off
         else
         {
