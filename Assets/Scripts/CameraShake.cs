@@ -11,6 +11,7 @@ public class CameraShake : MonoBehaviour {
 	Vector3 startPos;
 	Transform trans;
 	static CameraShake instance;
+	public AudioSource shakeNoise;
 
 	// Use this for initialization
 	void Start () {
@@ -22,6 +23,7 @@ public class CameraShake : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 		curShake = Mathf.Clamp01 (curShake - (Time.unscaledDeltaTime * decay));
+		shakeNoise.volume = curShake * curShake;
 		trans.position = startPos + (new Vector3 (Mathf.PerlinNoise (Time.unscaledTime * speed, 0) - 0.5f, Mathf.PerlinNoise (0, Time.unscaledTime * speed) - 0.5f) * intensity * curShake * curShake);
 	}
 

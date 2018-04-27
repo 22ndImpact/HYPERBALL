@@ -55,6 +55,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4445733312868856}
   - component: {fileID: 212030142479576220}
+  - component: {fileID: 96415506395996016}
   m_Layer: 0
   m_Name: Ball Visual
   m_TagString: Untagged
@@ -118,6 +119,99 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!96 &96415506395996016
+TrailRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1950212429761168}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_Materials:
+  - {fileID: 2100000, guid: d23dc51eede60da418a88cf6cd0d8934, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Time: 0.5
+  m_Parameters:
+    serializedVersion: 2
+    widthMultiplier: 1
+    widthCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 2
+        time: 0
+        value: 1
+        inSlope: -1.0118837
+        outSlope: -1.0118837
+        tangentMode: 0
+      - serializedVersion: 2
+        time: 1
+        value: 0
+        inSlope: -0.97853285
+        outSlope: -0.97853285
+        tangentMode: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 0
+    colorGradient:
+      serializedVersion: 2
+      key0: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 1}
+      key2: {r: 0, g: 0, b: 0, a: 0}
+      key3: {r: 0, g: 0, b: 0, a: 0}
+      key4: {r: 0, g: 0, b: 0, a: 0}
+      key5: {r: 0, g: 0, b: 0, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 0
+      ctime1: 65535
+      ctime2: 0
+      ctime3: 0
+      ctime4: 0
+      ctime5: 0
+      ctime6: 0
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_NumColorKeys: 2
+      m_NumAlphaKeys: 2
+    numCornerVertices: 0
+    numCapVertices: 0
+    alignment: 0
+    textureMode: 0
+    generateLightingData: 0
+  m_MinVertexDistance: 0.1
+  m_Autodestruct: 0
 --- !u!96 &96765943442943312
 TrailRenderer:
   serializedVersion: 2
@@ -228,22 +322,17 @@ MonoBehaviour:
   Speed: 0
   Direction: {x: 0, y: 0}
   ballVisual: {fileID: 4445733312868856}
-  StretchRate: 0.2
+  StretchRate: 0.4
   TargetPosition: {x: 0, y: 0, z: 0}
   TargetLocalScale: {x: 0, y: 0, z: 0}
-  MaximumScaleDifferential: 0.5
+  MaximumScaleDifferential: 0.25
   CurrentPercentSpeed: {x: 0, y: 0, z: 0}
   StartingLocalScale: {x: 0, y: 0, z: 0}
-  SimulatedSpeed: 0
-  SimulatedDirection: {x: 0, y: 0, z: 0}
-  SimulatedPosition: {x: 0, y: 0, z: 0}
-  SimulatedLocalScale: {x: 0, y: 0, z: 0}
-  SimulatedTargetRotation: {x: 0, y: 0, z: 0}
   SimulatedStalling: 0
   ballSpeeds: 0
-  CannonSpeed: 5
-  WallSpeed: 4
-  InitialSpeed: 3
+  CannonSpeed: 11
+  WallSpeed: 8
+  InitialSpeed: 6
   paddle: {fileID: 0}
   overlapping: 0
 --- !u!212 &212030142479576220

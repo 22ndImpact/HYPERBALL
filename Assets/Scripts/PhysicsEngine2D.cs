@@ -20,6 +20,7 @@ public class PhysicsEngine2D : MonoBehaviour
 
 	public AudioClip paddleHitSound;
 	public AudioClip wallHitSound;
+	public AudioClip[] splatSounds;
 
     private void Awake()
     {
@@ -97,6 +98,7 @@ public class PhysicsEngine2D : MonoBehaviour
     public void Collision(Ball _ball, Paddle _paddle)
     {
         Debug.Log("Collision Detected");
+		SoundController.PlayOneShot (splatSounds[Random.Range(0, splatSounds.Length)]);
         CollisionCorrection(_ball, _paddle);
     }
 
@@ -235,6 +237,7 @@ public class PhysicsEngine2D : MonoBehaviour
             newSpeed = Ball.BallSpeeds.WallSpeed;
             collisionType = "top";
 			CameraShake.Shake (0.8f);
+			SoundController.PlayOneShot (wallHitSound);
 		}
         //Bottom Side
         else if (_ball.transform.position.y < (_paddle.transform.position.y - _paddle.col2D.bounds.extents.y))
@@ -247,6 +250,7 @@ public class PhysicsEngine2D : MonoBehaviour
             newSpeed = Ball.BallSpeeds.WallSpeed;
             collisionType = "bottom";
 			CameraShake.Shake (0.8f);
+			SoundController.PlayOneShot (wallHitSound);
 		}
         else
         {

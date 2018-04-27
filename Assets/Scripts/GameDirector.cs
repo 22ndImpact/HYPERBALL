@@ -41,6 +41,12 @@ public class GameDirector : MonoBehaviour
 
 	public AudioClip ballLaunchClip;
 	public AudioClip ballScoreClip;
+	public AudioClip gameOverSound;
+	public float musicFadeOutLength = 0.4f;
+	public float musicFadeInLength = 4f;
+	public AnimationCurve musicFade;
+	float musicVol = 0;
+	AudioSource musicSource;
 
     bool PlayersHaveCharged = false;
 
@@ -57,17 +63,32 @@ public class GameDirector : MonoBehaviour
 
         //Runs the reset game function to "start a new game"
         ResetGame();
+
+		musicSource = GetComponent<AudioSource> ();
     }
 
     void Update()
     {
         UpdateStates();
 
+		MusicVolume ();
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             SceneManager.LoadScene(0);
         }
     }
+
+	void MusicVolume () {
+		if (gameState == GameState.PreGame || gameState == GameState.GameOver) {
+			// fade in
+			musicVol = Mathf.Clamp01 (musicVol + ((1f / musicFadeInLength) * Time.unscaledDeltaTime));
+		} else {
+			// fade out
+			musicVol = Mathf.Clamp01 (musicVol - ((1f / musicFadeOutLength) * Time.unscaledDeltaTime));
+		}
+		musicSource.volume = musicFade.Evaluate (musicVol);
+	}
 
     void UpdateStates()
     {
@@ -342,7 +363,8 @@ public class GameDirector : MonoBehaviour
 
     void GameOver()
     {
-        //Debug.Log("Game Over");
+		//Debug.Log("Game Over");
+		SoundController.PlayOneShot (gameOverSound);
 
         //Start the announcer text
         if (Player1Score > Player2Score)
