@@ -15,12 +15,23 @@ public class PhysicsEngine2D : MonoBehaviour
     public float hitTimeSlowScale;
     public float paddleHitTimeSlowDuration;
     public float normalHitTimeSlowDuration;
+    public float perfectHitTimeSlowDuration;
 
     public float EdgeBounceMultiplier;
 
 	public AudioClip paddleHitSound;
 	public AudioClip wallHitSound;
 	public AudioClip[] splatSounds;
+
+    public enum HitType
+    {
+        paddleRetract,
+        paddleReach,
+        perfect,
+        wall
+    }
+
+    public HitType hitType;
 
     private void Awake()
     {
@@ -97,7 +108,7 @@ public class PhysicsEngine2D : MonoBehaviour
 
     public void Collision(Ball _ball, Paddle _paddle)
     {
-        Debug.Log("Collision Detected");
+        //Debug.Log("Collision Detected");
 		SoundController.PlayOneShot (splatSounds[Random.Range(0, splatSounds.Length)]);
         CollisionCorrection(_ball, _paddle);
     }
@@ -106,6 +117,7 @@ public class PhysicsEngine2D : MonoBehaviour
     {
         //Vector3 combinedVelocities = _ball.velocity - _paddle.velocity;
 
+        //if(float.IsNaN(_ball.velocity.x))
         Vector3 workingBallVelocity = (Vector3)_ball.velocity * Time.deltaTime;
         Vector3 workingPaddleVelocity = (Vector3)_paddle.velocity * Time.deltaTime;
 
@@ -113,7 +125,7 @@ public class PhysicsEngine2D : MonoBehaviour
 
         float collisionSensitivity = 0.01f;
 
-        //Loops for a maximum of 100 times before exiting out
+        //The Collision correction loop
         for (int i = 0; i < 100; i++)
         {
             //Debug.Log("Current Overlap: " + _ball.col2D.Distance(_paddle.col2D).isOverlapped);
@@ -155,8 +167,25 @@ public class PhysicsEngine2D : MonoBehaviour
             //Half the new distance
             workingBallVelocity *= 0.5f;
             workingPaddleVelocity *= 0.5f;
-
         }
+
+        //If Ball is withing X range of the boundary line and the paddle is fully changed
+        bool PerfectHit = false;
+        #region Figure out the distance from the relative extent line
+        float distanceFromExtents;
+        if(_ball.transform.position.x > 0)
+        {
+            Debug.Log("Hit on right side of field");
+            distanceFromExtents = Mathf.Abs( _ball.transform.position.x - GameDirector.inst.FieldExtents);
+            Debug.Log("Distance: " + distanceFromExtents);
+        }
+        else
+        {
+            Debug.Log("Hit on left side of field");
+            distanceFromExtents = Mathf.Abs(_ball.transform.position.x - (-GameDirector.inst.FieldExtents));
+            Debug.Log("Distance: " + distanceFromExtents);
+        }
+        #endregion
 
         //A flag to see if the game needs to freeze time or not
         bool paddleHit = false;
@@ -165,6 +194,7 @@ public class PhysicsEngine2D : MonoBehaviour
         string collisionType = "";
 
         //Check the position of the ball
+
         //Right Side
         if(_ball.transform.position.x > (_paddle.transform.position.x + _paddle.col2D.bounds.extents.x))
         {
@@ -184,15 +214,15 @@ public class PhysicsEngine2D : MonoBehaviour
                 paddleHit = true;
                 //_ball.ChangeVelocity(newDirection, Ball.BallSpeeds.CannonSpeed);
                 newSpeed = Ball.BallSpeeds.CannonSpeed;
+                hitType = HitType.paddleReach;
             }
             else
             {
                 //Otherwise just change to the correct speed
                 //_ball.ChangeVelocity(newDirection, Ball.BallSpeeds.WallSpeed);
                 newSpeed = Ball.BallSpeeds.WallSpeed;
+                hitType = HitType.paddleRetract;
             }
-            collisionType = "right";
-            //Debug.Log("Verticle Offset: " + VerticleOffset);
         }
         //Left Side
         else if(_ball.transform.position.x < (_paddle.transform.position.x - _paddle.col2D.bounds.extents.x))
@@ -214,14 +244,16 @@ public class PhysicsEngine2D : MonoBehaviour
                 paddleHit = true;
                 //_ball.ChangeVelocity(newDirection, Ball.BallSpeeds.CannonSpeed);
                 newSpeed = Ball.BallSpeeds.CannonSpeed;
+                hitType = HitType.paddleReach;
             }
             else
             {
                 //Otherwise just change to the correct speed
                 //_ball.ChangeVelocity(newDirection, Ball.BallSpeeds.WallSpeed);
                 newSpeed = Ball.BallSpeeds.WallSpeed;
+                hitType = HitType.paddleRetract;
             }
-            collisionType = "left";
+            
 
 
             //Debug.Log("Verticle Offset: " + VerticleOffset);
@@ -235,9 +267,9 @@ public class PhysicsEngine2D : MonoBehaviour
             //Change the velocity and set the right speed
             //_ball.ChangeVelocity(newDirection, Ball.BallSpeeds.WallSpeed);
             newSpeed = Ball.BallSpeeds.WallSpeed;
-            collisionType = "top";
-			CameraShake.Shake (0.8f);
-			SoundController.PlayOneShot (wallHitSound);
+            hitType = HitType.wall;
+            CameraShake.Shake(0.8f);
+            SoundController.PlayOneShot(wallHitSound);
 		}
         //Bottom Side
         else if (_ball.transform.position.y < (_paddle.transform.position.y - _paddle.col2D.bounds.extents.y))
@@ -248,10 +280,11 @@ public class PhysicsEngine2D : MonoBehaviour
             //Change the velocity and set the right speed
             //_ball.ChangeVelocity(newDirection, Ball.BallSpeeds.WallSpeed);
             newSpeed = Ball.BallSpeeds.WallSpeed;
-            collisionType = "bottom";
-			CameraShake.Shake (0.8f);
+            hitType = HitType.wall;
+            CameraShake.Shake (0.8f);
 			SoundController.PlayOneShot (wallHitSound);
 		}
+        //If you didnt get anything
         else
         {
             //Debug.Log("WTF happened?");
@@ -262,25 +295,89 @@ public class PhysicsEngine2D : MonoBehaviour
         {
             //Retract the ball
             _paddle.StartRetracting(true);
-            //Slow time
-            StartCoroutine(slowTime(hitTimeSlowScale, paddleHitTimeSlowDuration, newDirection, newSpeed, collisionType));
 
-			//Distortion effect -- ZAC
-			DistortionWave.Play (_ball.transform.position);
+            //If its a paddle hit then you increase the number
+            if (distanceFromExtents <= GameDirector.inst.PerfectRangeSensitivity && _paddle.chargedPercent == 1)
+            {
+                hitType = HitType.perfect;
+                GameDirector.inst.RallyCount += 1;
+                SoundController.PlayOneShot(wallHitSound);
+
+                //Distortion effect -- ZAC
+                DistortionWave.Suck(_ball.transform.position);
+            }
+            //If it isnt a perfect hit you reset the rally
+            else
+            {
+                GameDirector.inst.RallyCount = 0;
+                //Distortion effect -- ZAC
+                DistortionWave.Play(_ball.transform.position);
+            }
+
+			
 			CameraShake.Shake (0.5f);
 			SoundController.PlayOneShot (paddleHitSound);
 		}
-        //Just bounce off
-        else
+
+        //Determine Speed based on hitType
+        switch (hitType)
         {
-            StartCoroutine(slowTime(hitTimeSlowScale, normalHitTimeSlowDuration, newDirection, newSpeed, collisionType));
+            case HitType.paddleRetract:
+                newSpeed = Ball.BallSpeeds.WallSpeed;
+                break;
+            case HitType.paddleReach:
+                newSpeed = Ball.BallSpeeds.CannonSpeed;
+                break;
+            case HitType.wall:
+                //If you are mid rally apply rally speed
+                if(GameDirector.inst.RallyCount > 0)
+                {
+                    newSpeed = Ball.BallSpeeds.RallySpeed;
+                }
+                //Otherwise do normal wall speed
+                else
+                {
+                    newSpeed = Ball.BallSpeeds.WallSpeed;
+                }
+                
+                break;
+            case HitType.perfect:
+                newSpeed = Ball.BallSpeeds.RallySpeed;
+                break;
         }
 
-        
+        //Slow time
+        StartCoroutine(slowTime(hitTimeSlowScale, newDirection, newSpeed, hitType));
     }
 
-    IEnumerator slowTime(float _timeScale, float _duration, Vector3 _newDirection, Ball.BallSpeeds _newBallSpeed, string _collisionType)
+    IEnumerator slowTime(float _timeScale, Vector3 _newDirection, Ball.BallSpeeds _newBallSpeed, HitType _hitType)
     {
+
+        float duration = 0;
+        //determine how long the ball stops for
+        //Determine Speed based on hitType
+        switch (_newBallSpeed)
+        {
+            case Ball.BallSpeeds.InitialSpeed:
+                duration = normalHitTimeSlowDuration;
+                break;
+            case Ball.BallSpeeds.WallSpeed:
+                duration = normalHitTimeSlowDuration;
+                break;
+            case Ball.BallSpeeds.CannonSpeed:
+                duration = paddleHitTimeSlowDuration;
+                break;
+            case Ball.BallSpeeds.RallySpeed:
+                if(_hitType == HitType.wall)
+                {
+                    duration = normalHitTimeSlowDuration;
+                }
+                else
+                {
+                    duration = perfectHitTimeSlowDuration;
+                }
+                break;
+        }
         //Change the velocity to flat up against the wall
 
         //Set to simulated stalling allowing us to control the variables directly
@@ -292,102 +389,13 @@ public class PhysicsEngine2D : MonoBehaviour
         //Set the target Position
         GameDirector.inst.ball.TargetPosition = GameDirector.inst.ball.transform.position;
 
-        #region Old Squish Angle Code
-        ////Unparent the ball visual so global scaling
-        //GameDirector.inst.ball.ballVisual.parent = null;
-
-        ////If moving horizontally
-        //if(Mathf.Abs(GameDirector.inst.ball.Direction.x) >= Mathf.Abs(GameDirector.inst.ball.Direction.y))
-        //{
-        //    //If moving Right
-        //    if(GameDirector.inst.ball.Direction.x >= 0)
-        //    {
-        //        //Always rotate to face the right
-        //        GameDirector.inst.ball.SimulatedTargetRotation = new Vector3(0, 0, 270);
-
-        //        //If Hitting Top
-        //        //Squish Y
-        //        GameDirector.inst.ball.SimulatedLocalScale = new Vector3(0.25f, 1, 0.25f);
-
-        //        //If Hitting Bottom
-        //        //Squish Y
-        //        GameDirector.inst.ball.SimulatedLocalScale = new Vector3(0.25f, 1, 0.25f);
-
-        //        //If Hitting Right
-        //        //Squish X
-        //        GameDirector.inst.ball.SimulatedLocalScale = new Vector3(1, 0.25f, 0.25f);
-        //    }
-        //    //If moving Left
-        //    else
-        //    {
-        //        //Always rotate to face the left
-        //        GameDirector.inst.ball.SimulatedTargetRotation = new Vector3(0, 0, 90);
-
-        //        //If Hitting Top
-        //        //Squish Y
-        //        GameDirector.inst.ball.SimulatedLocalScale = new Vector3(1, 0.25f, 0.25f);
-
-        //        //If Hitting Bottom
-        //        //Squish Y
-        //        GameDirector.inst.ball.SimulatedLocalScale = new Vector3(1, 0.25f, 0.25f);
-
-        //        //If Hitting Left
-        //        //Squish X
-        //        GameDirector.inst.ball.SimulatedLocalScale = new Vector3(0.25f, 1, 0.25f);
-        //    }
-        //}
-        ////If moving vertically
-        //else
-        //{
-        //    //If moving Up
-        //    if (GameDirector.inst.ball.Direction.y >= 0)
-        //    {
-        //        //Always rotate to face up
-        //        GameDirector.inst.ball.SimulatedTargetRotation = new Vector3(0, 0, 0);
-
-        //        //If Hitting Top
-        //        //Squish Y
-        //        GameDirector.inst.ball.SimulatedLocalScale = new Vector3(0.25f, 1, 0.25f);
-
-        //        //If Hitting Right
-        //        //Squish X
-        //        GameDirector.inst.ball.SimulatedLocalScale = new Vector3(1, 0.25f, 0.25f);
-
-        //        //If Hitting Left
-        //        //Squish X
-        //        GameDirector.inst.ball.SimulatedLocalScale = new Vector3(1, 0.25f, 0.25f);
-        //    }
-        //    //If moving Down
-        //    else
-        //    {
-        //        //Always rotate to face down
-        //        GameDirector.inst.ball.SimulatedTargetRotation = new Vector3(0, 0, 180);
-
-        //        //If Hitting Bottom
-        //        //Squish Y
-        //        GameDirector.inst.ball.SimulatedLocalScale = new Vector3(0.25f, 1, 0.25f);
-
-        //        //If Hitting Right
-        //        //Squish X
-        //        GameDirector.inst.ball.SimulatedLocalScale = new Vector3(1, 0.25f, 0.25f);
-
-        //        //If Hitting Left
-        //        //Squish X
-        //        GameDirector.inst.ball.SimulatedLocalScale = new Vector3(1, 0.25f, 0.25f);
-        //    }
-        //}
-        ////Reparent the ball visual for calculations
-        //GameDirector.inst.ball.ballVisual.parent = GameDirector.inst.ball.transform;
-        #endregion
-
         //Stop Time
         Time.timeScale = _timeScale;
-        yield return new WaitForSecondsRealtime(_duration);
+        yield return new WaitForSecondsRealtime(duration);
         Time.timeScale = 1.0f;
 
         GameDirector.inst.ball.SimulatedStalling = false;
         
-
         //Change the velocity to the intended angles
         GameDirector.inst.ball.ChangeVelocity(_newDirection, _newBallSpeed);
     }

@@ -48,12 +48,23 @@ public class GameDirector : MonoBehaviour
 	float musicVol = 0;
 	AudioSource musicSource;
 
+    public float ResetTime;
+    public float ResetTimer;
+
     bool PlayersHaveCharged = false;
+
+    public float PerfectRangeSensitivity;
+    public int RallyCount;
+    public float PerfectShotSpeedModifier;
+
 
     private void Awake()
     {
         //Instantiate Singlton
         inst = this;
+
+        //Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.visible = false;
     }
 
     void Start()
@@ -73,10 +84,7 @@ public class GameDirector : MonoBehaviour
 
 		MusicVolume ();
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SceneManager.LoadScene(0);
-        }
+        CheckReset();
     }
 
 	void MusicVolume () {
@@ -220,6 +228,10 @@ public class GameDirector : MonoBehaviour
         float SpinTimer = SpinTime;
         bool Spinning = true;
 
+        //Determine what way itll go
+        int ChosenDirection = Random.Range(0, 4);
+        //Debug.Log("Chosen direction :" + ChosenDirection);
+
         while (Spinning == true)
         {
             //Spin the ball
@@ -235,13 +247,39 @@ public class GameDirector : MonoBehaviour
                 SpinTimer -= Time.deltaTime;
             }
             //If the timer is <= 0 and the spinner is within range, break the coroutine.
-            else if ((CurrentRotation > 60 - PossibleLaunchAngle && CurrentRotation < 60 + PossibleLaunchAngle) ||
-                        (CurrentRotation > 120 - PossibleLaunchAngle && CurrentRotation < 120 + PossibleLaunchAngle) ||
-                        (CurrentRotation > 240 - PossibleLaunchAngle && CurrentRotation < 240 + PossibleLaunchAngle) ||
-                        (CurrentRotation > 300 - PossibleLaunchAngle && CurrentRotation < 300 + PossibleLaunchAngle))
+            else 
             {
-                //Debug.Log("Stop the spinning");
-                Spinning = false;
+                switch (ChosenDirection)
+                {
+                    case 0:
+                        if(CurrentRotation > 60 - PossibleLaunchAngle && CurrentRotation < 60 + PossibleLaunchAngle)
+                        {
+                            //Debug.Log("Stop the spinning");
+                            Spinning = false;
+                        }
+                        break;
+                    case 1:
+                        if (CurrentRotation > 120 - PossibleLaunchAngle && CurrentRotation < 120 + PossibleLaunchAngle)
+                        {
+                            //Debug.Log("Stop the spinning");
+                            Spinning = false;
+                        }
+                        break;
+                    case 2:
+                        if (CurrentRotation > 240 - PossibleLaunchAngle && CurrentRotation < 240 + PossibleLaunchAngle)
+                        {
+                            //Debug.Log("Stop the spinning");
+                            Spinning = false;
+                        }
+                        break;
+                    case 3:
+                        if (CurrentRotation > 300 - PossibleLaunchAngle && CurrentRotation < 300 + PossibleLaunchAngle)
+                        {
+                            //Debug.Log("Stop the spinning");
+                            Spinning = false;
+                        }
+                        break;
+                }
             }
             yield return null;
         }
@@ -402,7 +440,7 @@ public class GameDirector : MonoBehaviour
         //Reset the fact that players have charged their paddles for game start
         PlayersHaveCharged = false;
 
-        Debug.Log("New Game");
+        //Debug.Log("New Game");
         //Turns the ball on
         ball.gameObject.SetActive(true);
         //Reset the ball, duh
@@ -419,6 +457,17 @@ public class GameDirector : MonoBehaviour
         Player2Score = 0;
     }
 
+    void ResetClient()
+    {
+        Debug.Log("Resetting Client");
+        //Reset The reset counter
+        ResetTimer = 0;
+        //Reset Time Scale
+        Time.timeScale = 1;
+        //Reset the scene
+        SceneManager.LoadScene(0);
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(new Vector3(-FieldExtents, -10, 0), new Vector3(-FieldExtents, 10, 0));
@@ -426,5 +475,23 @@ public class GameDirector : MonoBehaviour
         Gizmos.DrawLine(new Vector3(FieldExtents, -10, 0), new Vector3(FieldExtents, 10, 0));
     }
 
+    void CheckReset()
+    {
+        if( Input.GetKey(Players[0].Paddles[0].fireKey) &&
+            Input.GetKey(Players[0].Paddles[3].fireKey) &&
+            Input.GetKey(Players[1].Paddles[0].fireKey) &&
+            Input.GetKey(Players[1].Paddles[3].fireKey))
+        {
+            ResetTimer += Time.unscaledDeltaTime;
+        }
+        else
+        {
+            ResetTimer = 0;
+        }
 
+        if(ResetTimer > ResetTime)
+        {
+            ResetClient();
+        }
+    }
 }

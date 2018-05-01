@@ -23,7 +23,7 @@ public class SoundController : MonoBehaviour {
 	}
 
 	public static void PlayOneShot (AudioClip clip, float volume) {
-		Debug.Log (volume);
+		//Debug.Log (volume);
 		instance.source.PlayOneShot (clip, volume);
 	}
 }

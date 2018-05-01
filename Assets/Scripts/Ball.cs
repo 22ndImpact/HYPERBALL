@@ -24,21 +24,28 @@ public class Ball : PhysicsObject
     {
         CannonSpeed,
         WallSpeed,
-        InitialSpeed
+        InitialSpeed,
+        RallySpeed
     }
+
     public BallSpeeds ballSpeeds;
 
     public float CannonSpeed;
     public float WallSpeed;
     public float InitialSpeed;
 
+    public float BaseIncrease;
+
     #region Debug Variables
     public Collider2D paddle;
     public bool overlapping;
     #endregion
 
+
+
     public void ChangeVelocity(Vector3 _direction, BallSpeeds _ballSpeed)
     {
+        
         //Change Direction
         Direction = _direction.normalized;
 
@@ -46,13 +53,29 @@ public class Ball : PhysicsObject
         switch (_ballSpeed)
         {
             case BallSpeeds.CannonSpeed:
+                Debug.Log("Changing to cannon speed");
                 Speed = CannonSpeed;
                 break;
             case BallSpeeds.WallSpeed:
+                Debug.Log("Changing to wall speed");
                 Speed = WallSpeed;
                 break;
             case BallSpeeds.InitialSpeed:
+                Debug.Log("Changing to initial speed");
                 Speed = InitialSpeed;
+                break;
+            case BallSpeeds.RallySpeed:
+                Debug.Log("Changing to rally speed");
+
+                //float newRallySpeed = CannonSpeed;
+
+                //for (int i = 0; i < GameDirector.inst.RallyCount; i++)
+                //{
+                //    newRallySpeed += (CannonSpeed/2) / (i+2);
+                //}
+
+                Speed = CannonSpeed * 1.4f;
+
                 break;
         }
     }
@@ -125,7 +148,7 @@ public class Ball : PhysicsObject
             if (velocity.x != 0 || velocity.y != 0)
             {
 
-                float SpeedPercent = Speed / CannonSpeed;
+                float SpeedPercent = Mathf.Clamp01(Speed / CannonSpeed);
                 float WarpPercent = SpeedPercent * MaximumScaleDifferential;
 
                 //Dont calculate the targetscale when simulating

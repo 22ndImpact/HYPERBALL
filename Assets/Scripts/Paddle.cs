@@ -186,7 +186,7 @@ public class Paddle : PhysicsObject
     public void StartCharging()
     {
         paddleState = PaddleState.Charging;
-		SoundController.PlayOneShot (chargeSound);
+		SoundController.PlayOneShot (chargeSound, 1.7f);
     }
     public void StartReaching()
     {
@@ -200,7 +200,7 @@ public class Paddle : PhysicsObject
         goalReachDistance = maxReachDistance * chargedPercent;
         //Set the chargedPosition to your current position
         chargedPosition = transform.position;
-		SoundController.PlayOneShot (launchSound, chargedPercent);
+		SoundController.PlayOneShot (launchSound, chargedPercent * 2f);
 	}
     public void StartRetracting(bool _BallCollision)
     {

@@ -37,8 +37,8 @@ public class PhysicsObject : MonoBehaviour
     protected virtual void LateUpdate()
     {
         //Calculate the velocity of this frame based on current position and the previous position last frame, just before the previous position gets updated.
-        velocity = ((Vector2)this.gameObject.transform.position - previousPosition) / Time.deltaTime;
-        
+        velocity = ((Vector2)this.gameObject.transform.position - previousPosition) / Time.unscaledDeltaTime;
+
         //Sets the previous position in the last line of executed code (hopefully)
         previousPosition = this.gameObject.transform.position;
     }

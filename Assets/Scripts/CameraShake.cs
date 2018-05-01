@@ -42,4 +42,9 @@ public class CameraShake : MonoBehaviour {
 		instance.extraBright = true;
 		instance.curShake = shakeAmount;
 	}
+
+    public static void Flash () {
+        instance.postFX.profile.colorGrading.enabled = true;
+        instance.extraBright = true;
+    }
 }

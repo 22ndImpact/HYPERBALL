@@ -9,7 +9,7 @@ public class DistortionWave : MonoBehaviour {
 	float curScale = 0f;
 	Transform trans;
 	Renderer rend;
-	static DistortionWave instance;
+	public static DistortionWave instance;
 
 	// Initialise stuff
 	void Start () {
@@ -26,8 +26,15 @@ public class DistortionWave : MonoBehaviour {
 		instance.StartCoroutine (instance.WaveRoutine());
 	}
 
-	// Get wave bigger until max size, then disable
-	IEnumerator WaveRoutine () {
+    // Reset and play the wave animation
+    public static void Suck (Vector2 position) {
+        instance.StopAllCoroutines ();
+        instance.trans.position = new Vector3 (position.x, position.y, instance.trans.position.z);
+        instance.StartCoroutine (instance.AntiWaveRoutine ());
+    }
+
+    // Get wave bigger until max size, then disable
+    IEnumerator WaveRoutine () {
 		rend.enabled = true;
 		curScale = 0;
 		while (curScale < maxSize) {
@@ -37,4 +44,17 @@ public class DistortionWave : MonoBehaviour {
 		}
 		rend.enabled = false;
 	}
+
+    // Felacio joke
+    IEnumerator AntiWaveRoutine () {
+        rend.enabled = true;
+        curScale = maxSize / 2;
+        while (curScale > 0) {
+            yield return new WaitForEndOfFrame ();
+            curScale -= Time.unscaledDeltaTime * expandSpeed;
+            trans.localScale = curScale * Vector3.one;
+        }
+        CameraShake.Flash ();
+        StartCoroutine (WaveRoutine ());
+    }
 }
