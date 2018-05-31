@@ -36,6 +36,8 @@ public class Ball : PhysicsObject
 
     public float BaseIncrease;
 
+	public ParticleSystem hitParticles;
+
     #region Debug Variables
     public Collider2D paddle;
     public bool overlapping;

@@ -110,7 +110,10 @@ public class PhysicsEngine2D : MonoBehaviour
     {
         //Debug.Log("Collision Detected");
 		SoundController.PlayOneShot (splatSounds[Random.Range(0, splatSounds.Length)]);
+
         CollisionCorrection(_ball, _paddle);
+
+		_ball.hitParticles.Play();
     }
 
     public void CollisionCorrection(Ball _ball, Paddle _paddle)

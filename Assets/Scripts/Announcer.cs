@@ -94,10 +94,10 @@ public class Announcer : MonoBehaviour
         if(On == false)
         {
             //Set up all the announcer texts
-            string PlayerOneTop = "READY";
+            string PlayerOneTop = "HOLD PADDLE TO HIT HARDER";
             string PlayerOneBottom = "CHARGE A PADDLE TO START";
 
-            string PlayerTwoTop = "READY";
+            string PlayerTwoTop = "HOLD PADDLE TO HIT HARDER";
             string PlayerTwoBottom = "CHARGE A PADDLE TO START";
 
             //Start the text display sequence
